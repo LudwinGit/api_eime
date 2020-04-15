@@ -9,7 +9,7 @@ import { RoleService } from 'src/role/role.service';
 
 @Module({
     imports: [
-        SequelizeModule.forFeature([Usuario, Password,Rol])
+        SequelizeModule.forFeature([Usuario,Password,Rol])
     ],
     controllers: [UsuarioController],
     providers: [UsuarioService,RoleService]

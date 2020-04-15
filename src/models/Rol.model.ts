@@ -1,4 +1,4 @@
-import { Column,Model,Table, PrimaryKey } from "sequelize-typescript";
+import { Column,Model,Table,PrimaryKey } from "sequelize-typescript";
 
 @Table({tableName: "rol",timestamps: false})
 export class Rol extends Model<Rol>{
