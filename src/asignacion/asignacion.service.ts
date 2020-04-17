@@ -51,4 +51,16 @@ export class AsignacionService {
             return null;
         }
     }
+
+    async asignacionesUsuario(id: number): Promise<any[]> {
+        try {
+            const result = await this.sequelize
+                .query(`select * from curso a
+                        where a.estado = '1' and a.id_curso not in(select id_curso from asignacion where id_usuario = ${id} )`);
+            return result[0];
+        } catch (err) {
+            console.log(err)
+            return null;
+        }
+    }
 }

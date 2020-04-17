@@ -65,12 +65,22 @@ export class UsuarioController {
     }
 
     @Get('/cursos/:id')
-    async courses(@Res() res: Response, @Param() params): Promise<any> {
+    async cursos(@Res() res: Response, @Param() params): Promise<any> {
         const usuario = await this.usuarioService.findById(params.id);
         if (usuario == null)
-            return res.json({ "cursos": [] })
+            return res.json({ "cursos": [], "message": "El usuario no existe" })
 
         const cursos = await this.asignacionService.cursosUsuario(params.id);
+        return res.json({ cursos });
+    }
+
+    @Get('/asignacion/:id')
+    async asignacion(@Res() res: Response, @Param() params): Promise<any> {
+        const usuario = await this.usuarioService.findById(params.id);
+        if (usuario == null)
+            return res.json({ "cursos": [], "message": "El usuario no existe" })
+
+        const cursos = await this.asignacionService.asignacionesUsuario(params.id);
         return res.json({ cursos });
     }
 }
