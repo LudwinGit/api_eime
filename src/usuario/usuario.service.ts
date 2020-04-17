@@ -18,6 +18,10 @@ export class UsuarioService {
         return await this.usuarioModel.findAll();
     }
 
+    async findById(id : number): Promise<Usuario>{
+        return await this.usuarioModel.findOne({where: {id_usuario: id}});
+    }
+
     async findByEmail(findEmailDto: FindEmailDto): Promise<Usuario> {
         return await this.usuarioModel.findOne({ where: { correo: findEmailDto.email } });
     }

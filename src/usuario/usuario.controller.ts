@@ -5,12 +5,14 @@ import { FindEmailDto } from "./dto/find-email.dto";
 import { LoginDto } from "./dto/login.dto";
 import { Response, response } from 'express';
 import { RoleService } from 'src/role/role.service';
+import { AsignacionService } from 'src/asignacion/asignacion.service';
 
 @Controller('usuario')
 export class UsuarioController {
     constructor(
         private readonly usuarioService: UsuarioService,
-        private readonly rolService: RoleService
+        private readonly rolService: RoleService,
+        private readonly asignacionService: AsignacionService
     ) { }
     @Get()
     async findAll(): Promise<Usuario[]> {
@@ -60,6 +62,16 @@ export class UsuarioController {
                 }
             };
         return res.json(response);
+    }
+
+    @Get('/cursos/:id')
+    async courses(@Res() res: Response, @Param() params): Promise<any> {
+        const usuario = await this.usuarioService.findById(params.id);
+        if (usuario == null)
+            return res.json({ "cursos": [] })
+
+        const cursos = await this.asignacionService.cursosUsuario(params.id);
+        return res.json({ cursos });
     }
 }
 
