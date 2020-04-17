@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { Asignacion } from 'src/models/Asignacion.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize';
+import { CreateAsignacionDto } from './dto/create-asignacion.dto';
 
 @Injectable()
 export class AsignacionService {
@@ -61,6 +62,19 @@ export class AsignacionService {
         } catch (err) {
             console.log(err)
             return null;
+        }
+    }
+
+    async crearAsignacion(crearAsignacionDto: CreateAsignacionDto) {
+        let date = new Date();
+        let timestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:00`;
+        try {
+            const result = await this.sequelize
+                .query(`INSERT INTO asignacion values(${crearAsignacionDto.id_usuario},${crearAsignacionDto.id_curso},'${timestamp}')`);
+            return 1;
+        } catch (err) {
+            console.log(err)
+            return 0;
         }
     }
 }
