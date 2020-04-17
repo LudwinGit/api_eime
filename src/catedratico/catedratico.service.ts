@@ -1,18 +1,33 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
 import { Usuario } from 'src/models/Usuario.model';
-import { Sequelize } from 'sequelize';
+import { Sequelize} from 'sequelize';
+import { Curso } from 'src/models/Curso.model';
+import { Sesion } from 'src/models/Sesion.model';
 
 @Injectable()
 export class CatedraticoService {
   constructor(
       @InjectModel(Usuario)
       private usuarioModel: typeof Usuario,
+      @InjectModel(Curso)
+      private cursoModel: typeof Curso,
+      @InjectModel(Sesion)
+      private sesionModel: typeof Sesion,
       private sequelize: Sequelize
   ){}
 
   async findAll(): Promise<Usuario[]> {
     return await this.usuarioModel.findAll({attributes: ['id_usuario', 'nombre', 'carrera', 'correo','dpi', 'telefono'],where:{id_rol:2}});
+  }
+
+  async findCourses(id):Promise<any[]>{
+    const courses = await this.cursoModel.findAll({where:{id_catedratico:id}});
+    for(const c of courses){
+      const sesiones = await this.sesionModel.findAll({where:{id_curso:c.id_curso}});
+      c.sesiones = sesiones
+    }
+    return courses
   }
 
   async addCatedratico(ct):Promise<number>{ 

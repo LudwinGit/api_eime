@@ -1,8 +1,8 @@
 import { Column,Model,Table, Default, AllowNull, PrimaryKey } from "sequelize-typescript";
+import { DataTypes } from "sequelize";
 
 @Table({tableName: "curso",timestamps: false})
 export class Curso extends Model<Curso>{
-    
     @PrimaryKey
     @Column
     id_curso: number;
@@ -35,4 +35,7 @@ export class Curso extends Model<Curso>{
     @AllowNull(true)
     @Column
     descripcion: string;
+
+    @Column(DataTypes.VIRTUAL)
+    sesiones:any[]
 }
