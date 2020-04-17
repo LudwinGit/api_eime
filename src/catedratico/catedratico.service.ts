@@ -18,7 +18,7 @@ export class CatedraticoService {
   ){}
 
   async findAll(): Promise<Usuario[]> {
-    return await this.usuarioModel.findAll({attributes: ['id_usuario', 'nombre', 'carrera', 'correo','dpi', 'telefono'],where:{id_rol:2}});
+    return await this.usuarioModel.findAll({where:{id_rol:2}});
   }
 
   async findCourses(id):Promise<any[]>{
@@ -36,7 +36,7 @@ export class CatedraticoService {
       .query(' SELECT create_user_catedratico (:nombre, :dpi, :correo, :telefono, :pwd, :direccion, :foto, :carrera, :firma)', 
         {replacements: { 
             nombre: ct.nombre, 
-            dpi: ct.cui, 
+            dpi: ct.dpi, 
             correo: ct.correo, 
             telefono: ct.telefono, 
             pwd: ct.pwd, 
@@ -71,11 +71,15 @@ export class CatedraticoService {
   async updateCatedratico(ct):Promise<number>{ 
     try{
       const result = await this.usuarioModel.update({
-          nombre: ct.nombre,
+          nombre: ct.nombre, 
+          dpi: ct.dpi, 
+          correo: ct.correo, 
+          telefono: ct.telefono, 
+          pwd: ct.pwd, 
+          direccion: ct.direccion, 
+          foto: ct.foto, 
           carrera: ct.carrera,
-          correo: ct.correo,
-          dpi: ct.cui,
-          telefono: ct.telefono
+          firma: ct.firma
         },
         { where: {id_usuario:ct.id_usuario}
       });
