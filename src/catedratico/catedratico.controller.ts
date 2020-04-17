@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Res, Req, Delete, Query, Put, Param } from '@nestjs/common';
 import { CatedraticoService } from './catedratico.service';
 import { Request, Response} from 'express';
+import { identity } from 'rxjs';
 
 @Controller('catedratico')
 export class CatedraticoController {
@@ -11,6 +12,11 @@ export class CatedraticoController {
     @Get()
     async findAll():Promise<any[]>{
         return await this.catedraticoService.findAll();
+    }
+
+    @Get(':id/cursos')
+    async findCourses(@Param('id')id:string):Promise<any[]>{
+       return await this.catedraticoService.findCourses(id)
     }
 
     @Post()
