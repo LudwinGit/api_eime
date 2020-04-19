@@ -1,21 +1,25 @@
-import { Column,Model,Table, Default, AllowNull, PrimaryKey, AutoIncrement } from "sequelize-typescript";
+import { Column,Model,Table, Default, AllowNull, PrimaryKey, AutoIncrement, Unique } from "sequelize-typescript";
 
 @Table({tableName: "usuario",timestamps: false})
 export class Usuario extends Model<Usuario>{
     
     @PrimaryKey
+    @AutoIncrement
     @Column
     id_usuario: number;
 
     @Default('N/A')
+    @Unique
     @Column
     nombre: string;
 
     @Default('N/A')
+    @Unique
     @Column
     dpi: string;
 
     @Default('N/A')
+    @Unique
     @Column
     correo: string;
 
@@ -35,6 +39,7 @@ export class Usuario extends Model<Usuario>{
     foto: string;
 
     @AllowNull(true)
+    @Unique
     @Column
     carne: string;
 

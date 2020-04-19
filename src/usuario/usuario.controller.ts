@@ -3,9 +3,13 @@ import { UsuarioService } from './usuario.service';
 import { Usuario } from 'src/models/Usuario.model';
 import { FindEmailDto } from "./dto/find-email.dto";
 import { LoginDto } from "./dto/login.dto";
+import { CreateUserDto } from "./dto/create.dto";
 import { Response, response } from 'express';
 import { RoleService } from 'src/role/role.service';
 import { AsignacionService } from 'src/asignacion/asignacion.service';
+import { Password } from 'src/models/Password.model';
+import { async } from 'rxjs/internal/scheduler/async';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Controller('usuario')
 export class UsuarioController {
@@ -82,6 +86,60 @@ export class UsuarioController {
 
         const cursos = await this.asignacionService.asignacionesUsuario(params.id);
         return res.json({ cursos });
+    }
+
+    @Post('register')
+    async registrar(@Res() res: Response, @Body() createUserDto: CreateUserDto): Promise<any> {
+        let response;
+        if (await this.usuarioService.create(createUserDto)) {
+            response = {
+                success: 1,
+                message: ""
+            }
+        } else {
+            response = {
+                success: 0,
+                message: "No se pudo crear el usuario."
+            }
+        }
+        return res.json({ response });
+    }
+
+    @Get(':id')
+    async find(@Res() res: Response, @Param() params): Promise<any> {
+        let usuario: Usuario = await this.usuarioService.findById(params.id);
+        let response;
+        if (usuario === null) {
+            response = {
+                success: 0,
+                message: "El usuario no esta registrado",
+                user_data: null
+            }
+        } else {
+            response = {
+                success: 1,
+                message: "",
+                user_data: usuario
+            }
+        }
+
+        return res.json({ response });
+    }
+
+    @Post('change_password')
+    async change_password(@Res() res: Response, @Body() changePasswordDto: ChangePasswordDto): Promise<any> {
+        console.log("aca",changePasswordDto);
+        
+        if (await this.usuarioService.changePassword(changePasswordDto)) {
+            return res.json({
+                success: 1,
+                message: "¡Su contrasena se cambio correctamente!"
+            })
+        }
+        return res.json({
+            success: 0,
+            message: ""
+        })
     }
 }
 
