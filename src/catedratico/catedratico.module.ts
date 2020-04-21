@@ -6,12 +6,12 @@ import { Usuario } from 'src/models/Usuario.model';
 import { Password } from 'src/models/Password.model';
 import { Rol } from 'src/models/Rol.model';
 import { RoleService } from 'src/role/role.service';
-import { Curso } from 'src/models/Curso.model';
+import { Diplomado } from 'src/models/Diplomado.model';
 import { Sesion } from 'src/models/Sesion.model';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Usuario,Password,Rol,Curso,Sesion])
+    SequelizeModule.forFeature([Usuario,Password,Rol,Diplomado,Sesion])
   ],
   controllers: [CatedraticoController],
   providers: [CatedraticoService,RoleService]

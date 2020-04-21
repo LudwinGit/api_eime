@@ -23,9 +23,9 @@ export class Usuario extends Model<Usuario>{
     @Column
     correo: string;
 
-    @AllowNull(true)
+    @Default('B\'0\'')
     @Column
-    telefono: string;
+    debaja: number;
 
     @Column
     id_rol : number;
@@ -33,6 +33,10 @@ export class Usuario extends Model<Usuario>{
     @AllowNull(true)
     @Column
     direccion: string;
+
+    @AllowNull(true)
+    @Column
+    telefono: string;
 
     @AllowNull(true)
     @Column
