@@ -4,6 +4,7 @@ import { Usuario } from 'src/models/Usuario.model';
 import { Sequelize} from 'sequelize';
 import { Diplomado } from 'src/models/Diplomado.model';
 import { Sesion } from 'src/models/Sesion.model';
+import { Password } from 'src/models/Password.model';
 
 @Injectable()
 export class CatedraticoService {
@@ -14,22 +15,32 @@ export class CatedraticoService {
       private diplomadoModel: typeof Diplomado,
       @InjectModel(Sesion)
       private sesionModel: typeof Sesion,
+      @InjectModel(Password)
+      private passwordModel: typeof Password,
       private sequelize: Sequelize
   ){}
 
   async findAll(): Promise<Usuario[]> {
-    
-    return await this.usuarioModel.findAll({where:{id_rol:2}});
+    const catedraticos = await this.usuarioModel.findAll({where:{id_rol:2}});
+    for(const c of catedraticos){
+      let password = await this.passwordModel.findOne({
+          attributes: ['pwd'],
+          where:
+            { id_usuario: c.id_usuario, active: '1' }
+        });
+        c.password = password.pwd;
+    }
+    return catedraticos;
   }
 
-  /*async findCourses(id):Promise<any[]>{
-    const courses = await this.diplomadoModel.findAll({where:{id_catedratico:id}});
-    for(const c of courses){
-      const sesiones = await this.sesionModel.findAll({where:{id_diplomado:c.id_diplomado}});
-      c.sesiones = sesiones
+  async findCourses(id):Promise<any[]>{
+    const diplomados = await this.diplomadoModel.findAll({where:{id_catedratico:id}});
+    for(const d of diplomados){
+      const sesiones = await this.sesionModel.findAll({where:{id_diplomado:d.id_diplomado}});
+      d.sesiones = sesiones
     }
-    return courses
-  }*/
+    return diplomados
+  }
 
   async addCatedratico(ct):Promise<{}>{ 
     try{
@@ -54,45 +65,54 @@ export class CatedraticoService {
     } 
   }
 
-  /*async deleteCatedratico(id):Promise<{}>{ 
+  async deleteCatedratico(id):Promise<{}>{ 
     try {
       const result = await this.usuarioModel.update({debaja:'B1'},{where:{id_usuario:id}});
       if(result[0]>0){
-        return {sucess:1, message:''};
+        return {success:1, message:''};
       }else{
-        return {sucess:0, message:'No existe el catedratico'};
+        return {success:0, message:'No existe el catedratico'};
       }
     } catch (err) {
       console.log('ERROR:')
       console.log(err)
-      return {sucess:0, message:'Exception'+err};
+      return {success:0, message:'Exception'+err};
     }
   }
   
-  async updateCatedratico(ct):Promise<number>{ 
+  async updateCatedratico(ct):Promise<{}>{ 
     try{
       const result = await this.usuarioModel.update({
           nombre: ct.nombre, 
           dpi: ct.dpi, 
           correo: ct.correo, 
+          debaja: ct.debaja,
           telefono: ct.telefono, 
-          pwd: ct.pwd, //////////////////////La tablla no tiene un pwd
           direccion: ct.direccion, 
-          foto: ct.foto, 
+          foto: ct.foto,
           carrera: ct.carrera,
           firma: ct.firma
         },
         { where: {id_usuario:ct.id_usuario}
       });
       if(result[0]>0){
-        return 1;
+        let password: Password = await this.passwordModel.findOne({
+          where: {
+              active: '1',
+              id_usuario: ct.id_usuario,
+            }
+          });
+        await this.passwordModel.update({
+          pwd:ct.pwd
+        }, {where:{id_password:password.id_password}})
+        return {success: 1, message: ''};
       }else{
-        return 0;
+        return {success:0, message:'No existe el profesor'}
       }
     }catch(err){
       console.log('ERROR:')
       console.log(err)
-      return 0;
+      return {success:0, message:'Error en BD '+err}
     }
-  }*/
+  }
 }

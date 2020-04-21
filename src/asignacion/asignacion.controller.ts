@@ -8,7 +8,7 @@ export class AsignacionController {
         private readonly asignacionService: AsignacionService
     ) { }
 
-    @Get('reporte/:id')
+    @Post('reporte/:id')
     async reporteAsistencia(@Param('id') id: string): Promise<any[]> {
         return await this.asignacionService.reporteAsistencia(id);
     }
