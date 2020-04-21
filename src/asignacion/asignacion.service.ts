@@ -22,14 +22,14 @@ export class AsignacionService {
                     inner join asignacion asg
                     on u.id_usuario = asg.id_usuario
                     inner join sesion s
-                    on asg.id_curso = s.id_curso
+                    on asg.id_diplomado = s.id_diplomado
                     inner join asistencia ast
                     on s.id_sesion = ast.id_sesion
-                    where asg.id_curso=:_id_curso AND ast.id_usuario = u.id_usuario
+                    where asg.id_diplomado=:_id_diplomado AND ast.id_usuario = u.id_usuario
                     group by u.dpi, u.nombre;`,
                     {
                         replacements: {
-                            _id_curso: id
+                            _id_diplomado: id
                         }
                     });
             return result[0];
@@ -40,6 +40,7 @@ export class AsignacionService {
         }
     }
 
+    //CORREGIR tomar en cuenta que la tabla curso, ya no existe. Si esta solucionado ignorar este comentario.
     async cursosUsuario(id: number): Promise<any[]> {
         try {
             const result = await this.sequelize

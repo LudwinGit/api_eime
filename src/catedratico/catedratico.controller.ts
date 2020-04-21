@@ -14,10 +14,10 @@ export class CatedraticoController {
         return await this.catedraticoService.findAll();
     }
 
-    /*@Post(':id/diplomados')
+    @Post(':id/diplomados')
     async findCourses(@Param('id')id:string):Promise<any[]>{
        return await this.catedraticoService.findCourses(id)
-    }*/
+    }
 
     @Post('new')
     async addCatedratico(@Req() req:Request, @Res() res: Response):Promise<any>{
@@ -37,7 +37,7 @@ export class CatedraticoController {
         return res.json(response);
     }
 
-    /*@Delete(':id')
+    @Delete(':id')
     async deleteCatedratico(@Param() param, @Res() res: Response):Promise<any>{
         const result = await this.catedraticoService.deleteCatedratico(param.id);
         const response = result['success'] === 1? 
@@ -57,7 +57,7 @@ export class CatedraticoController {
     async updateCatedratico(@Req() req:Request, @Res() res: Response):Promise<any>{
         //console.log(req.body);
         const result = await this.catedraticoService.updateCatedratico(req.body);
-        const response = result === 1? 
+        const response = result['success'] === 1? 
             {
                 success: 1,
                 message: '',
@@ -66,9 +66,9 @@ export class CatedraticoController {
             :
             {
                 success: 0,
-                message: 'Error al actualizar catedratico',
+                message: 'Error al actualizar catedratico'+result['message'],
                 catedratico: req.body
             };
         return res.json(response);
-    }*/
+    }
 }

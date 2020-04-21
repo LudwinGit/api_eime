@@ -8,27 +8,26 @@ export class SesionController {
         private readonly sesionService: SesionService
     ){}
 
-    @Get()
-    async findAll():Promise<any[]>{
-        return await this.sesionService.findAll();
-    }
+    //@Get()
+    //async findAll():Promise<any[]>{
+    //    return await this.sesionService.findAll();
+    //}
 
     @Post()
     async addCatedratico(@Req() req:Request, @Res() res: Response):Promise<any>{
-        /*const result = await this.sesionService.addSesion(req.body);
-        const response = result === 1? 
+        const result = await this.sesionService.addSesion(req.body);
+        const response = result['success'] === 1? 
             {
                 success: 1,
                 message: '',
-                catedratico: req.body 
+                codigo: result['code']
             }
             :
             {
                 success: 0,
-                message: 'Error al crear la sesion, ya hay una sesion en la fecha estipulada',
-                catedratico: req.body
+                message: 'Error al crear la sesion: '+result['message'],
+                codigo: null
             };
-        return res.json(response);*/
-        return res.json({mensaje:'Hola post sesiones'});
+        return res.json(response);
     }
 }

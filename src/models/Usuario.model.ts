@@ -1,4 +1,5 @@
 import { Column,Model,Table, Default, AllowNull, PrimaryKey, AutoIncrement, Unique } from "sequelize-typescript";
+import { DataTypes } from "sequelize";
 
 @Table({tableName: "usuario",timestamps: false})
 export class Usuario extends Model<Usuario>{
@@ -54,4 +55,7 @@ export class Usuario extends Model<Usuario>{
     @AllowNull(true)
     @Column
     firma: string;
+
+    @Column(DataTypes.VIRTUAL)
+    password: any;
 }
