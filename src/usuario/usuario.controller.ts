@@ -128,8 +128,6 @@ export class UsuarioController {
 
     @Post('change_password')
     async change_password(@Res() res: Response, @Body() changePasswordDto: ChangePasswordDto): Promise<any> {
-        console.log("aca",changePasswordDto);
-        
         if (await this.usuarioService.changePassword(changePasswordDto)) {
             return res.json({
                 success: 1,
@@ -140,6 +138,12 @@ export class UsuarioController {
             success: 0,
             message: ""
         })
+    }
+
+    @Get('asistencia/:id_usuario/:id_diplomado')
+    async asistencia(@Res() res: Response, @Param() params): Promise<any> {
+        const asistencias = await this.usuarioService.asistencia(params.id_usuario, params.id_diplomado);
+        return res.json({ asistencias });
     }
 }
 
