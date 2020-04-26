@@ -61,6 +61,8 @@ export class UsuarioService {
         usuario.dpi = createUserDto.cui;
         usuario.foto = createUserDto.picture;
         usuario.id_rol = 3;
+        usuario.debaja = '0';
+
         await usuario.save();
 
         let password: Password = new Password();

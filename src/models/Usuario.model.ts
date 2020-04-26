@@ -24,9 +24,9 @@ export class Usuario extends Model<Usuario>{
     @Column
     correo: string;
 
-    @Default('B\'0\'')
+    // @Default('B\'0\'')
     @Column
-    debaja: number;
+    debaja: string;
 
     @Column
     id_rol : number;
