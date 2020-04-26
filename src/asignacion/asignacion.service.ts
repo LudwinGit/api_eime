@@ -55,10 +55,12 @@ export class AsignacionService {
     }
 
     async asignacionesUsuario(id: number): Promise<any[]> {
+        let date = new Date();
+        let timestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
         try {
             const result = await this.sequelize
                 .query(`select * from diplomado a
-                        where a.estado = '1' and a.id_diplomado not in(select id_diplomado from asignacion where id_usuario = ${id} )`);
+                        where a.estado = '1' and a.id_diplomado not in(select id_diplomado from asignacion where id_usuario = ${id}) and a.fecha_inicio >= ${timestamp}`);
             return result[0];
         } catch (err) {
             console.log(err)
@@ -68,7 +70,7 @@ export class AsignacionService {
 
     async crearAsignacion(crearAsignacionDto: CreateAsignacionDto) {
         let date = new Date();
-        let timestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:00`;
+        let timestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:00`;
         let codigo_unico = crearAsignacionDto.id_usuario + crearAsignacionDto.id_curso + Math.random().toString(36).substring(7);
         try {
             const result = await this.sequelize
@@ -78,5 +80,10 @@ export class AsignacionService {
             console.log(err)
             return 0;
         }
+    }
+
+    async validar(codigo: string): Promise<any> {
+        const resultado = await this.sequelize.query(`select * from f_validar_codigo('${codigo}')`);
+        return resultado[0];
     }
 }
