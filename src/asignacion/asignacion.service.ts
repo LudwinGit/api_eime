@@ -68,7 +68,7 @@ export class AsignacionService {
 
     async crearAsignacion(crearAsignacionDto: CreateAsignacionDto) {
         let date = new Date();
-        let timestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:00`;
+        let timestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:00`;
         let codigo_unico = crearAsignacionDto.id_usuario + crearAsignacionDto.id_curso + Math.random().toString(36).substring(7);
         try {
             const result = await this.sequelize
