@@ -37,6 +37,23 @@ export class CatedraticoController {
         return res.json(response);
     }
 
+    @Delete('/diplomado')
+    async deleteCatedraticoDiplomado(@Req() req:Request, @Res() res: Response):Promise<any>{
+        console.log('Dar de baja diplomado')
+        const result = await this.catedraticoService.deleteCatedraticoDiplomado(req.body);
+        const response = result['success'] === 1? 
+            {
+                success: 1,
+                message: '' 
+            }
+            :
+            {
+                success: 0,
+                message: 'Error al eliminar el diplomado: '+result['message']
+            };
+        return res.json(response);
+    }
+
     @Delete(':id')
     async deleteCatedratico(@Param() param, @Res() res: Response):Promise<any>{
         const result = await this.catedraticoService.deleteCatedratico(param.id);

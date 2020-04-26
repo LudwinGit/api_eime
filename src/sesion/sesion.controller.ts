@@ -14,7 +14,7 @@ export class SesionController {
     //}
 
     @Post()
-    async addCatedratico(@Req() req:Request, @Res() res: Response):Promise<any>{
+    async addSesion(@Req() req:Request, @Res() res: Response):Promise<any>{
         const result = await this.sesionService.addSesion(req.body);
         const response = result['success'] === 1? 
             {

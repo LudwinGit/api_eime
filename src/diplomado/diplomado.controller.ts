@@ -14,7 +14,7 @@ export class DiplomadoController {
     }
 
     @Post('new')
-    async addCatedratico(@Req() req:Request, @Res() res: Response):Promise<any>{
+    async addDiplomado(@Req() req:Request, @Res() res: Response):Promise<any>{
         const result = await this.diplomadoService.addDiplomado(req.body);
         const response = result['success'] === 1? 
             {
@@ -32,7 +32,7 @@ export class DiplomadoController {
     }
 
     @Delete(':id')
-    async deleteCatedratico(@Param() param, @Res() res: Response):Promise<any>{
+    async deleteDiplomado(@Param() param, @Res() res: Response):Promise<any>{
         const result = await this.diplomadoService.deleteDiplomado(param.id);
         const response = result['success'] === 1? 
             {
@@ -48,7 +48,7 @@ export class DiplomadoController {
     }
 
     @Put()
-    async updateCatedratico(@Req() req:Request, @Res() res: Response):Promise<any>{
+    async updateDiplomado(@Req() req:Request, @Res() res: Response):Promise<any>{
         //console.log(req.body);
         const result = await this.diplomadoService.updateDiplomado(req.body);
         const response = result['success'] === 1? 
