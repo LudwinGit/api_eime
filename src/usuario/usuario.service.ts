@@ -27,7 +27,7 @@ export class UsuarioService {
     }
 
     async findByEmail(findEmailDto: FindEmailDto): Promise<Usuario> {
-        return await this.usuarioModel.findOne({ where: { correo: findEmailDto.email } });
+        return await this.usuarioModel.findOne({ where: { correo: findEmailDto.email, debaja: '0' } });
     }
 
     async login(loginDto: LoginDto): Promise<Usuario> {
