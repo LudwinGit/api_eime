@@ -79,4 +79,9 @@ export class AsignacionService {
             return 0;
         }
     }
+
+    async validar(codigo: string): Promise<any> {
+        const resultado = await this.sequelize.query(`select * from f_validar_codigo('${codigo}')`);
+        return resultado[0];
+    }
 }

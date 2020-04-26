@@ -21,4 +21,24 @@ export class AsignacionController {
         }
         return res.json({ "success": 1, "message": "" });
     }
+
+    @Get('validacion/:codigo')
+    async validar(@Res() res, @Param() params): Promise<any> {
+        const resultado = await this.asignacionService.validar(params.codigo);
+
+        if (resultado === null)
+            return res.json({
+                "success": 0,
+                "diplomado": "",
+                "estudiante": "",
+                "aprobado": 0
+            })
+
+        return res.json({
+            "success": 1,
+            "diplomado": resultado[0].diplomado,
+            "estudiante": resultado[0].estudiante,
+            "aprobado": resultado[0].aprobado
+        });
+    }
 }
