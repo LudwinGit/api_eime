@@ -55,10 +55,12 @@ export class AsignacionService {
     }
 
     async asignacionesUsuario(id: number): Promise<any[]> {
+        let date = new Date();
+        let timestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
         try {
             const result = await this.sequelize
                 .query(`select * from diplomado a
-                        where a.estado = '1' and a.id_diplomado not in(select id_diplomado from asignacion where id_usuario = ${id} )`);
+                        where a.estado = '1' and a.id_diplomado not in(select id_diplomado from asignacion where id_usuario = ${id}) and a.fecha_inicio >= ${timestamp}`);
             return result[0];
         } catch (err) {
             console.log(err)
