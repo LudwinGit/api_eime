@@ -10,6 +10,7 @@ import { AsignacionService } from 'src/asignacion/asignacion.service';
 import { Password } from 'src/models/Password.model';
 import { async } from 'rxjs/internal/scheduler/async';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import moment = require('moment');
 
 @Controller('usuario')
 export class UsuarioController {
@@ -45,6 +46,18 @@ export class UsuarioController {
 
     @Post('/login')
     async login(@Res() res: Response, @Body() loginDto: LoginDto): Promise<any> {
+        const password: Password = await this.usuarioService.validarPassword(loginDto);
+
+
+        if (password === null)
+            return res.json({
+                success: 0,
+                message: "La contraseña no es correcta.",
+                user: null
+            })
+
+        var datePass = moment(password.fecha_hora);
+        var dateNow = moment();
         const usuario = await this.usuarioService.login(loginDto);
         const role = (usuario == null) ? null : await this.rolService.findOne(usuario.id_rol);
 
@@ -58,6 +71,7 @@ export class UsuarioController {
             {
                 success: 1,
                 message: "",
+                dias_pass: datePass.diff(dateNow, 'days'),
                 user: {
                     id_rol: usuario.id_rol,
                     role: role.nombre,
@@ -128,8 +142,6 @@ export class UsuarioController {
 
     @Post('change_password')
     async change_password(@Res() res: Response, @Body() changePasswordDto: ChangePasswordDto): Promise<any> {
-        console.log("aca",changePasswordDto);
-        
         if (await this.usuarioService.changePassword(changePasswordDto)) {
             return res.json({
                 success: 1,
@@ -141,5 +153,13 @@ export class UsuarioController {
             message: ""
         })
     }
+
+    @Get('asistencia/:id_usuario/:id_diplomado')
+    async asistencia(@Res() res: Response, @Param() params): Promise<any> {
+        const asistencias = await this.usuarioService.asistencia(params.id_usuario, params.id_diplomado);
+        return res.json({ asistencias });
+    }
+
+    // @Get('dias_password')
 }
 

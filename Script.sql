@@ -110,11 +110,16 @@ CREATE TABLE asistencia(
 	asistio BIT DEFAULT B'0'
 );
 
+/*
+**Todas las sesiones incluida la del primer dia de clase son generadas manualmente
+**ya no se utiliza este triger
 CREATE OR REPLACE FUNCTION create_first_session()
   RETURNS trigger AS $$
+  DECLARE new_id integer;
 BEGIN
+	new_id = (SELECT nextval(pg_get_serial_sequence('sesion', 'id_sesion')));
 	INSERT INTO sesion(id_diplomado,fecha,hora_inicio,codigo_validacion)
-	VALUES(NEW.id_diplomado, NEW.fecha_inicio,NEW.hora,'Bienvenida');
+	VALUES(NEW.id_diplomado, NEW.fecha_inicio,NEW.hora,concat(new_id,extract(epoch from now()) * 1000));
 	RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
@@ -123,7 +128,7 @@ CREATE TRIGGER first_session
   AFTER INSERT
   ON diplomado
   FOR EACH ROW
-  EXECUTE PROCEDURE create_first_session();
+  EXECUTE PROCEDURE create_first_session();*/
  
  CREATE OR REPLACE FUNCTION create_user_estudiante(
 	_nombre VARCHAR(100),
@@ -204,7 +209,10 @@ BEGIN
 			IF(_fecha_hora::timestamp::time>=s.hora_inicio AND _fecha_hora::timestamp::time<=s.hora_limite) THEN
 				BEGIN
 					UPDATE asistencia SET asistio = B'1', fecha_hora=DATE_TRUNC('second', _fecha_hora) WHERE id_usuario = _id_usuario AND id_sesion = _id_sesion;
-					RETURN 'Asistencia valida' as mensaje;
+					IF NOT FOUND THEN
+						RETURN 'Usuario no asignado al curso' as mensaje;
+					END IF;
+					RETURN '1' as mensaje;
 				END;
 			END IF;
 			RETURN 'No cumple la hora';
@@ -215,6 +223,11 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
+/*
+**Como ahora las sesiones todas se generan manualmente
+**Al crear un diplomado NO se crea la sesion por defecto,
+**Por tanto no es necesario que al asignarse, se cree la asistencia de los usuarios la primer sesio
+**Pues esta no ha sido generada
 CREATE OR REPLACE FUNCTION create_first_asistencia()
   RETURNS trigger AS $$
 DECLARE cu diplomado%rowtype;
@@ -233,6 +246,7 @@ CREATE TRIGGER first_asistencia
   ON asignacion
   FOR EACH ROW
   EXECUTE PROCEDURE create_first_asistencia();
+*/
   
 /*
 DROP TABLE asistencia;

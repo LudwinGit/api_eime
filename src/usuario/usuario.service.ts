@@ -6,6 +6,7 @@ import { LoginDto } from './dto/login.dto';
 import { Password } from 'src/models/Password.model';
 import { CreateUserDto } from './dto/create.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { Sequelize } from 'sequelize';
 
 @Injectable()
 export class UsuarioService {
@@ -14,6 +15,7 @@ export class UsuarioService {
         private usuarioModel: typeof Usuario,
         @InjectModel(Password)
         private passwordModel: typeof Password,
+        private sequelize: Sequelize
     ) { }
 
     async findAll(): Promise<Usuario[]> {
@@ -25,7 +27,7 @@ export class UsuarioService {
     }
 
     async findByEmail(findEmailDto: FindEmailDto): Promise<Usuario> {
-        return await this.usuarioModel.findOne({ where: { correo: findEmailDto.email } });
+        return await this.usuarioModel.findOne({ where: { correo: findEmailDto.email, debaja: '0' } });
     }
 
     async login(loginDto: LoginDto): Promise<Usuario> {
@@ -59,6 +61,8 @@ export class UsuarioService {
         usuario.dpi = createUserDto.cui;
         usuario.foto = createUserDto.picture;
         usuario.id_rol = 3;
+        usuario.debaja = '0';
+
         await usuario.save();
 
         let password: Password = new Password();
@@ -86,9 +90,37 @@ export class UsuarioService {
             return false;
 
         await this.passwordModel.update({
-            pwd : changePasswordDto.newPassword
-        },{where:{id_password: password.id_password}});
+            pwd: changePasswordDto.newPassword
+        }, { where: { id_password: password.id_password } });
 
         return true;
+    }
+
+    async asistencia(id_usuario: number, id_diplomado: number): Promise<any> {
+        try {
+            const result = await this.sequelize
+                .query(`select * from asistencia a 
+                join sesion b on b.id_sesion = a.id_sesion
+                where b.id_diplomado = ${id_diplomado} and a.id_usuario = ${id_usuario}`);
+            return result[0];
+        } catch (err) {
+            console.log(err)
+            return null;
+        }
+    }
+
+    async validarPassword(loginDto: LoginDto): Promise<Password> {
+        
+        let password: Password = await this.passwordModel.findOne({
+            where: {
+                pwd: loginDto.password,
+                active: '1',
+                id_usuario: loginDto.id,
+            }
+        });
+        if (password === null)
+            return null;
+
+        return password;
     }
 }

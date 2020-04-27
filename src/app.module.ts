@@ -17,6 +17,7 @@ import { Diplomado } from './models/Diplomado.model';
 import { Asignacion } from './models/Asignacion.model';
 import { Sesion } from './models/Sesion.model';
 import { BitacoraModule } from './bitacora/bitacora.module';
+import { AsistenciaModule } from './asistencia/asistencia.module';
 
 @Module({
   imports: [
@@ -38,7 +39,7 @@ import { BitacoraModule } from './bitacora/bitacora.module';
     UsuarioModule, 
     RoleModule, 
     CatedraticoModule, 
-    DiplomadoModule, AsignacionModule, SesionModule, BitacoraModule
+    DiplomadoModule, AsignacionModule, SesionModule, BitacoraModule,AsistenciaModule
   ],
   controllers: [AppController],
   providers: [AppService],

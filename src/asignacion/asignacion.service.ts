@@ -3,6 +3,7 @@ import { Asignacion } from 'src/models/Asignacion.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize';
 import { CreateAsignacionDto } from './dto/create-asignacion.dto';
+import moment = require('moment');
 
 @Injectable()
 export class AsignacionService {
@@ -45,7 +46,7 @@ export class AsignacionService {
         try {
             const result = await this.sequelize
                 .query(`select b.* from asignacion a
-                        join curso b on a.id_curso = b.id_curso
+                        join diplomado b on a.id_diplomado = b.id_diplomado
                         where id_usuario = ${id}`);
             return result[0];
         } catch (err) {
@@ -55,10 +56,12 @@ export class AsignacionService {
     }
 
     async asignacionesUsuario(id: number): Promise<any[]> {
+        let date = new Date();
+
         try {
             const result = await this.sequelize
-                .query(`select * from curso a
-                        where a.estado = '1' and a.id_curso not in(select id_curso from asignacion where id_usuario = ${id} )`);
+                .query(`select * from diplomado a
+                        where a.estado = '1' and a.id_diplomado not in(select id_diplomado from asignacion where id_usuario = ${id}) and a.fecha_inicio >= '${moment().format("YYYY-MM-DD")}'`);
             return result[0];
         } catch (err) {
             console.log(err)
@@ -68,14 +71,20 @@ export class AsignacionService {
 
     async crearAsignacion(crearAsignacionDto: CreateAsignacionDto) {
         let date = new Date();
-        let timestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:00`;
+        let timestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:00`;
+        let codigo_unico = crearAsignacionDto.id_usuario + crearAsignacionDto.id_curso + Math.random().toString(36).substring(7);
         try {
             const result = await this.sequelize
-                .query(`INSERT INTO asignacion values(${crearAsignacionDto.id_usuario},${crearAsignacionDto.id_curso},'${timestamp}')`);
+                .query(`INSERT INTO asignacion values(${crearAsignacionDto.id_usuario},${crearAsignacionDto.id_curso},'${timestamp}','${codigo_unico}')`);
             return 1;
         } catch (err) {
             console.log(err)
             return 0;
         }
+    }
+
+    async validar(codigo: string): Promise<any> {
+        const resultado = await this.sequelize.query(`select * from f_validar_codigo('${codigo}')`);
+        return resultado[0];
     }
 }
