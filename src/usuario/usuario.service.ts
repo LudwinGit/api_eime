@@ -108,4 +108,19 @@ export class UsuarioService {
             return null;
         }
     }
+
+    async validarPassword(loginDto: LoginDto): Promise<Password> {
+        
+        let password: Password = await this.passwordModel.findOne({
+            where: {
+                pwd: loginDto.password,
+                active: '1',
+                id_usuario: loginDto.id,
+            }
+        });
+        if (password === null)
+            return null;
+
+        return password;
+    }
 }

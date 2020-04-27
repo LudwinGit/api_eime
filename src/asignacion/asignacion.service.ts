@@ -3,6 +3,7 @@ import { Asignacion } from 'src/models/Asignacion.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize';
 import { CreateAsignacionDto } from './dto/create-asignacion.dto';
+import moment = require('moment');
 
 @Injectable()
 export class AsignacionService {
@@ -56,11 +57,11 @@ export class AsignacionService {
 
     async asignacionesUsuario(id: number): Promise<any[]> {
         let date = new Date();
-        let timestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`;
+
         try {
             const result = await this.sequelize
                 .query(`select * from diplomado a
-                        where a.estado = '1' and a.id_diplomado not in(select id_diplomado from asignacion where id_usuario = ${id}) and a.fecha_inicio >= ${timestamp}`);
+                        where a.estado = '1' and a.id_diplomado not in(select id_diplomado from asignacion where id_usuario = ${id}) and a.fecha_inicio >= '${moment().format("YYYY-MM-DD")}'`);
             return result[0];
         } catch (err) {
             console.log(err)

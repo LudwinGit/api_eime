@@ -36,7 +36,10 @@ export class AsignacionController {
     async validar(@Res() res, @Param() params): Promise<any> {
         const resultado = await this.asignacionService.validar(params.codigo);
 
-        if (resultado === null)
+        console.log(resultado);
+        
+
+        if (resultado[0].diplomado === null)
             return res.json({
                 "success": 0,
                 "diplomado": "",
