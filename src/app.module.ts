@@ -16,6 +16,7 @@ import { Rol } from './models/Rol.model';
 import { Diplomado } from './models/Diplomado.model';
 import { Asignacion } from './models/Asignacion.model';
 import { Sesion } from './models/Sesion.model';
+import { BitacoraModule } from './bitacora/bitacora.module';
 
 @Module({
   imports: [
@@ -37,7 +38,7 @@ import { Sesion } from './models/Sesion.model';
     UsuarioModule, 
     RoleModule, 
     CatedraticoModule, 
-    DiplomadoModule, AsignacionModule, SesionModule
+    DiplomadoModule, AsignacionModule, SesionModule, BitacoraModule
   ],
   controllers: [AppController],
   providers: [AppService],
