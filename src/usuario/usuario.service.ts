@@ -30,11 +30,15 @@ export class UsuarioService {
         return await this.usuarioModel.findOne({ where: { correo: findEmailDto.email, debaja: '0' } });
     }
 
-    async login(loginDto: LoginDto): Promise<Usuario> {
+    async login(loginDto: LoginDto, ip): Promise<Usuario> {
         const password = await this.passwordModel.findOne({
             where:
                 { pwd: loginDto.password, id_usuario: loginDto.id }
         });
+
+
+        await this.sequelize.query(`INSERT INTO bitacora(id_usuario,fecha_hora,ip) VALUES(${loginDto.id},now(),'${ip}')`);
+
 
         return (password == null) ? null :
             await this.usuarioModel.findOne({ where: { id_usuario: loginDto.id } });

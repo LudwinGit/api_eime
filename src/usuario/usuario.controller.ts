@@ -45,10 +45,9 @@ export class UsuarioController {
     }
 
     @Post('/login')
-    async login(@Res() res: Response, @Body() loginDto: LoginDto): Promise<any> {
+    async login(@Req() req, @Res() res: Response, @Body() loginDto: LoginDto): Promise<any> {
         const password: Password = await this.usuarioService.validarPassword(loginDto.password, loginDto.id);
-
-
+        
         if (password === null)
             return res.json({
                 success: 0,
@@ -58,8 +57,9 @@ export class UsuarioController {
 
         var datePass = moment(password.fecha_hora).tz('America/Guatemala');
         var dateNow = moment().tz('America/Guatemala');
-        const usuario = await this.usuarioService.login(loginDto);
+        const usuario = await this.usuarioService.login(loginDto,req.ip);
         const role = (usuario == null) ? null : await this.rolService.findOne(usuario.id_rol);
+
 
         const response = (usuario === null) ?
             {
