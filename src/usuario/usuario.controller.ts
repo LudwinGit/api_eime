@@ -10,7 +10,7 @@ import { AsignacionService } from 'src/asignacion/asignacion.service';
 import { Password } from 'src/models/Password.model';
 import { async } from 'rxjs/internal/scheduler/async';
 import { ChangePasswordDto } from './dto/change-password.dto';
-import moment = require('moment');
+import moment = require('moment-timezone');
 
 @Controller('usuario')
 export class UsuarioController {
@@ -46,7 +46,7 @@ export class UsuarioController {
 
     @Post('/login')
     async login(@Res() res: Response, @Body() loginDto: LoginDto): Promise<any> {
-        const password: Password = await this.usuarioService.validarPassword(loginDto);
+        const password: Password = await this.usuarioService.validarPassword(loginDto.password, loginDto.id);
 
 
         if (password === null)
@@ -56,8 +56,8 @@ export class UsuarioController {
                 user: null
             })
 
-        var datePass = moment(password.fecha_hora);
-        var dateNow = moment();
+        var datePass = moment(password.fecha_hora).tz('America/Guatemala');
+        var dateNow = moment().tz('America/Guatemala');
         const usuario = await this.usuarioService.login(loginDto);
         const role = (usuario == null) ? null : await this.rolService.findOne(usuario.id_rol);
 
@@ -79,6 +79,8 @@ export class UsuarioController {
                     nombre: usuario.nombre
                 }
             };
+
+
         return res.json(response);
     }
 
@@ -121,6 +123,11 @@ export class UsuarioController {
 
     @Get(':id')
     async find(@Res() res: Response, @Param() params): Promise<any> {
+        const password: Password = await this.usuarioService.getPassword(params.id);
+        const validarPassword: Password = await this.usuarioService.validarPassword(password.pwd,params.id)
+
+        var datePass = moment(validarPassword.fecha_hora).tz('America/Guatemala');
+        var dateNow = moment().tz('America/Guatemala');
         let usuario: Usuario = await this.usuarioService.findById(params.id);
         let response;
         if (usuario === null) {
@@ -133,7 +140,8 @@ export class UsuarioController {
             response = {
                 success: 1,
                 message: "",
-                user_data: usuario
+                user_data: usuario,
+                dias_pass: datePass.diff(dateNow, 'days'),
             }
         }
 
@@ -159,6 +167,7 @@ export class UsuarioController {
         const asistencias = await this.usuarioService.asistencia(params.id_usuario, params.id_diplomado);
         return res.json({ asistencias });
     }
+
 
     // @Get('dias_password')
 }

@@ -109,18 +109,23 @@ export class UsuarioService {
         }
     }
 
-    async validarPassword(loginDto: LoginDto): Promise<Password> {
-        
+    async validarPassword(pwd: string, id_usaurio: number): Promise<Password> {
+
         let password: Password = await this.passwordModel.findOne({
             where: {
-                pwd: loginDto.password,
+                pwd: pwd,
                 active: '1',
-                id_usuario: loginDto.id,
+                id_usuario: id_usaurio,
             }
         });
+
         if (password === null)
             return null;
 
         return password;
+    }
+
+    async getPassword(id_usuario: string): Promise<Password> {
+        return await this.passwordModel.findOne({ where: { 'active': '1', 'id_usuario': id_usuario } });
     }
 }
