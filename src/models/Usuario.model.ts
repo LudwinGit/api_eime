@@ -1,9 +1,9 @@
-import { Column,Model,Table, Default, AllowNull, PrimaryKey, AutoIncrement, Unique } from "sequelize-typescript";
+import { Column, Model, Table, Default, AllowNull, PrimaryKey, AutoIncrement, Unique } from "sequelize-typescript";
 import { DataTypes } from "sequelize";
 
-@Table({tableName: "usuario",timestamps: false})
+@Table({ tableName: "usuario", timestamps: false })
 export class Usuario extends Model<Usuario>{
-    
+
     @PrimaryKey
     @AutoIncrement
     @Column
@@ -29,7 +29,7 @@ export class Usuario extends Model<Usuario>{
     debaja: string;
 
     @Column
-    id_rol : number;
+    id_rol: number;
 
     @AllowNull(true)
     @Column
@@ -58,4 +58,8 @@ export class Usuario extends Model<Usuario>{
 
     @Column(DataTypes.VIRTUAL)
     password: any;
+
+    @AllowNull(true)
+    @Column
+    img_seguridad: string;
 }

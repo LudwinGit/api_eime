@@ -1,4 +1,4 @@
-export class CreateUserDto{
+export class CreateUserDto {
     carnet: string;
     password: string;
     nombre: string;
@@ -10,4 +10,5 @@ export class CreateUserDto{
     direccion: string;
     cui: string;
     picture: string;
+    sec_img: string;
 }

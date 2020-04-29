@@ -76,7 +76,8 @@ export class UsuarioController {
                     id_rol: usuario.id_rol,
                     role: role.nombre,
                     photo: usuario.foto,
-                    nombre: usuario.nombre
+                    nombre: usuario.nombre,
+                    fecha: dateNow
                 }
             };
 

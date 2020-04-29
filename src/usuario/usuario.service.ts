@@ -7,6 +7,8 @@ import { Password } from 'src/models/Password.model';
 import { CreateUserDto } from './dto/create.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { Sequelize } from 'sequelize';
+import { now } from 'moment';
+import moment = require('moment');
 
 @Injectable()
 export class UsuarioService {
@@ -66,6 +68,7 @@ export class UsuarioService {
         usuario.foto = createUserDto.picture;
         usuario.id_rol = 3;
         usuario.debaja = '0';
+        usuario.img_seguridad = createUserDto.sec_img;
 
         await usuario.save();
 
