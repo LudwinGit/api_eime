@@ -55,8 +55,15 @@ export class CatedraticoService {
             direccion: ct.direccion, 
             foto: ct.foto, 
             carrera: ct.carrera,
-            firma: ct.firma 
+            firma: ct.firma
       }});
+      const setImg = await this.sequelize
+        .query('UPDATE usuario SET img_seguridad = :sec_img WHERE correo = :correo',{
+          replacements:{
+            sec_img:ct.sec_img,
+            correo: ct.correo
+          }
+        })
       return {success:1,message:''};
     }catch(err){
       console.log('ERROR:')
@@ -125,6 +132,15 @@ export class CatedraticoService {
         await this.passwordModel.update({
           pwd:ct.pwd
         }, {where:{id_password:password.id_password}})
+        if(ct.sec_img!=null){
+          console.log('Actualiza');
+          await this.sequelize.query('UPDATE usuario SET img_seguridad = :sec_img WHERE id_usuario = :id_usuario',{
+            replacements:{
+              sec_img:ct.sec_img,
+              id_usuario:ct.id_usuario
+            }
+          })
+        }
         return {success: 1, message: ''};
       }else{
         return {success:0, message:'No existe el profesor'}
