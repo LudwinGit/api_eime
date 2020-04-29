@@ -38,7 +38,6 @@ export class UsuarioService {
                 { pwd: loginDto.password, id_usuario: loginDto.id }
         });
 
-
         await this.sequelize.query(`INSERT INTO bitacora(id_usuario,fecha_hora,ip) VALUES(${loginDto.id},now(),'${ip}')`);
 
 
@@ -134,5 +133,12 @@ export class UsuarioService {
 
     async getPassword(id_usuario: string): Promise<Password> {
         return await this.passwordModel.findOne({ where: { 'active': '1', 'id_usuario': id_usuario } });
+    }
+
+    async validarImagen(loginDto: LoginDto): Promise<boolean> {
+        const usuario: Usuario = await this.usuarioModel.findOne({ where: { 'id_usuario': loginDto.id, 'img_seguridad': loginDto.sec_img } })
+        if (usuario === null)
+            return false;
+        return true;
     }
 }
