@@ -16,9 +16,11 @@ export class AsignacionService {
     async reporteAsistencia(id): Promise<any[]> {
         try {
             const result = await this.sequelize
-                .query(`select u.dpi, u.nombre,
-                        (count(ast.id_sesion) FILTER (WHERE ast.asistio = B'1'))::numeric/count(ast.id_sesion)*100 as Asistencia,
-                        (count(ast.id_sesion) FILTER (WHERE ast.asistio = B'0'))::numeric/count(ast.id_sesion)*100 as Inasistencia
+                .query(`
+                    select u.dpi, u.nombre,
+                        (count(ast.id_sesion) FILTER (WHERE ast.asistio = B'1'))::numeric/count(di.no_sesiones)*100 as Asistencia,
+                        (count(ast.id_sesion) FILTER (WHERE ast.asistio = B'0'))::numeric/count(di.no_sesiones)*100 as Inasistencia,
+                        asg.codigo_unico
                     from usuario u
                     inner join asignacion asg
                     on u.id_usuario = asg.id_usuario
@@ -26,8 +28,10 @@ export class AsignacionService {
                     on asg.id_diplomado = s.id_diplomado
                     inner join asistencia ast
                     on s.id_sesion = ast.id_sesion
+                    inner join diplomado di
+                    on s.id_diplomado = di.id_diplomado
                     where asg.id_diplomado=:_id_diplomado AND ast.id_usuario = u.id_usuario
-                    group by u.dpi, u.nombre;`,
+                    group by u.dpi, u.nombre, asg.codigo_unico;`,
                     {
                         replacements: {
                             _id_diplomado: id
