@@ -7,8 +7,7 @@ import { Password } from 'src/models/Password.model';
 import { CreateUserDto } from './dto/create.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { Sequelize } from 'sequelize';
-import { now } from 'moment';
-import moment = require('moment');
+import moment = require('moment-timezone');
 
 @Injectable()
 export class UsuarioService {
@@ -72,9 +71,11 @@ export class UsuarioService {
         await usuario.save();
 
         let password: Password = new Password();
-        let date = new Date();
+        let date = moment().tz('America/Guatemala');
+        date.add(30, 'days');
+
         password.pwd = createUserDto.password;
-        password.fecha_hora = date;
+        password.fecha_hora = date.format('YYYY-MM-DD hh:m:s');
         password.id_usuario = usuario.id_usuario;
         password.active = '1';
         await password.save();
@@ -86,18 +87,28 @@ export class UsuarioService {
 
         let password: Password = await this.passwordModel.findOne({
             where: {
-                pwd: changePasswordDto.password,
-                active: '1',
+                pwd: changePasswordDto.newPassword,
                 id_usuario: changePasswordDto.id,
             }
         });
 
-        if (password === null)
+        if (password !== null)
             return false;
 
+
         await this.passwordModel.update({
-            pwd: changePasswordDto.newPassword
-        }, { where: { id_password: password.id_password } });
+            active: '0'
+        }, { where: { id_usuario: changePasswordDto.id } });
+
+        let newPassword: Password = new Password();
+        let date = moment().tz('America/Guatemala');
+        date.add(30, 'days');
+
+        newPassword.pwd = changePasswordDto.newPassword;
+        newPassword.fecha_hora = date.format('YYYY-MM-DD hh:m:s');
+        newPassword.id_usuario = changePasswordDto.id;
+        newPassword.active = '1';
+        await newPassword.save();
 
         return true;
     }
@@ -105,7 +116,7 @@ export class UsuarioService {
     async asistencia(id_usuario: number, id_diplomado: number): Promise<any> {
         try {
             const result = await this.sequelize
-                .query(`select * from asistencia a 
+                .query(`select * from asistencia a
                 join sesion b on b.id_sesion = a.id_sesion
                 where b.id_diplomado = ${id_diplomado} and a.id_usuario = ${id_usuario}`);
             return result[0];

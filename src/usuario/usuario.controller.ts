@@ -160,6 +160,7 @@ export class UsuarioController {
 
     @Post('change_password')
     async change_password(@Res() res: Response, @Body() changePasswordDto: ChangePasswordDto): Promise<any> {
+        
         if (await this.usuarioService.changePassword(changePasswordDto)) {
             return res.json({
                 success: 1,
@@ -168,7 +169,7 @@ export class UsuarioController {
         }
         return res.json({
             success: 0,
-            message: ""
+            message: "Debe ingresar una contraseña que no haya utilizado."
         })
     }
 
