@@ -88,4 +88,21 @@ export class CatedraticoController {
             };
         return res.json(response);
     }
+
+    @Put('/diplomado')
+    async cancelarCatedraticoDiplomado(@Req() req:Request, @Res() res: Response):Promise<any>{
+        console.log('Cancelar diplomado')
+        const result = await this.catedraticoService.cancelarCatedraticoDiplomado(req.body);
+        const response = result['success'] === 1? 
+            {
+                success: 1,
+                message: '' 
+            }
+            :
+            {
+                success: 0,
+                message: 'Error al cancelar el diplomado: '+result['message']
+            };
+        return res.json(response);
+    }
 }
