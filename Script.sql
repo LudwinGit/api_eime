@@ -62,7 +62,7 @@ CREATE TABLE diplomado(
 	lugar VARCHAR(100) NOT NULL,
 	hora TIME NOT NULL,
 	fecha_inicio DATE NOT NULL,
-	estado BIT DEFAULT B'1',
+	estado SMALLINT DEFAULT 1, --Se cambio el tipo de dato, mas informacion ver el archivo migration_estado_diplomado.sql
 	descripcion VARCHAR(200),
 	CONSTRAINT u_fecha_hora
 		UNIQUE(lugar,fecha_inicio,hora)

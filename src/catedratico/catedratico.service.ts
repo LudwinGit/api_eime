@@ -90,7 +90,27 @@ export class CatedraticoService {
   async deleteCatedraticoDiplomado(body):Promise<{}>{ 
     try {
       const result = await this.diplomadoModel.update(
-        {estado:'B0'},
+        {estado: 0},
+        {where:{
+            id_catedratico:body.id_catedratico,
+            id_diplomado:body.id_diplomado
+          }});
+      if(result[0]>0){
+        return {success:1, message:''};
+      }else{
+        return {success:0, message:'No existe el diplomado'};
+      }
+    } catch (err) {
+      console.log('ERROR:')
+      console.log(err)
+      return {success:0, message:'Exception'+err};
+    }
+  }
+
+  async cancelarCatedraticoDiplomado(body):Promise<{}>{ 
+    try {
+      const result = await this.diplomadoModel.update(
+        {estado: 3},
         {where:{
             id_catedratico:body.id_catedratico,
             id_diplomado:body.id_diplomado

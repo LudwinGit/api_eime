@@ -28,7 +28,7 @@ export class Diplomado extends Model<Diplomado>{
     @Column
     fecha_inicio: string;
 
-    @Default('B\'1\'')
+    @Default(1)
     @Column
     estado: number;
 
