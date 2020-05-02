@@ -110,7 +110,7 @@ export class CatedraticoService {
   async cancelarCatedraticoDiplomado(body):Promise<{}>{ 
     try {
       const result = await this.diplomadoModel.update(
-        {estado: 3},
+        {estado: 2},
         {where:{
             id_catedratico:body.id_catedratico,
             id_diplomado:body.id_diplomado
