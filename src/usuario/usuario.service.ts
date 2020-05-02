@@ -37,7 +37,9 @@ export class UsuarioService {
                 { pwd: loginDto.password, id_usuario: loginDto.id }
         });
 
-        await this.sequelize.query(`INSERT INTO bitacora(id_usuario,fecha_hora,ip) VALUES(${loginDto.id},now(),'${ip}')`);
+        let date = moment().tz('America/Guatemala');
+        date.format('YYYY-MM-DD hh:m:s')
+        await this.sequelize.query(`INSERT INTO bitacora(id_usuario,fecha_hora,ip) VALUES(${loginDto.id},'${date.format('YYYY-MM-DD hh:m:s')}','${ip}')`);
 
 
         return (password == null) ? null :
