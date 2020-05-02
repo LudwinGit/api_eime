@@ -3,7 +3,7 @@ import { Asignacion } from 'src/models/Asignacion.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize';
 import { CreateAsignacionDto } from './dto/create-asignacion.dto';
-import moment = require('moment');
+import moment = require('moment-timezone');
 
 @Injectable()
 export class AsignacionService {
@@ -74,12 +74,12 @@ export class AsignacionService {
     }
 
     async crearAsignacion(crearAsignacionDto: CreateAsignacionDto) {
-        let date = new Date();
-        let timestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.getHours()}:${date.getMinutes()}:00`;
+        let date = moment().tz('America/Guatemala');
+
         let codigo_unico = crearAsignacionDto.id_usuario + crearAsignacionDto.id_curso + Math.random().toString(36).substring(7);
         try {
             const result = await this.sequelize
-                .query(`INSERT INTO asignacion values(${crearAsignacionDto.id_usuario},${crearAsignacionDto.id_curso},'${timestamp}','${codigo_unico}')`);
+                .query(`INSERT INTO asignacion values(${crearAsignacionDto.id_usuario},${crearAsignacionDto.id_curso},'${date.format('YYYY-MM-DD HH:m:s')}','${codigo_unico}')`);
             return 1;
         } catch (err) {
             console.log(err)

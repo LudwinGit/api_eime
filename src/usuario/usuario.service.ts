@@ -38,8 +38,8 @@ export class UsuarioService {
         });
 
         let date = moment().tz('America/Guatemala');
-        date.format('YYYY-MM-DD hh:m:s')
-        await this.sequelize.query(`INSERT INTO bitacora(id_usuario,fecha_hora,ip) VALUES(${loginDto.id},'${date.format('YYYY-MM-DD hh:m:s')}','${ip}')`);
+        date.format('YYYY-MM-DD HH:m:s')
+        await this.sequelize.query(`INSERT INTO bitacora(id_usuario,fecha_hora,ip) VALUES(${loginDto.id},'${date.format('YYYY-MM-DD HH:m:s')}','${ip}')`);
 
 
         return (password == null) ? null :
@@ -77,7 +77,7 @@ export class UsuarioService {
         date.add(30, 'days');
 
         password.pwd = createUserDto.password;
-        password.fecha_hora = date.format('YYYY-MM-DD hh:m:s');
+        password.fecha_hora = date.format('YYYY-MM-DD HH:m:s');
         password.id_usuario = usuario.id_usuario;
         password.active = '1';
         await password.save();
@@ -107,7 +107,7 @@ export class UsuarioService {
         date.add(30, 'days');
 
         newPassword.pwd = changePasswordDto.newPassword;
-        newPassword.fecha_hora = date.format('YYYY-MM-DD hh:m:s');
+        newPassword.fecha_hora = date.format('YYYY-MM-DD HH:m:s');
         newPassword.id_usuario = changePasswordDto.id;
         newPassword.active = '1';
         await newPassword.save();

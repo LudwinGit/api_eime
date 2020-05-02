@@ -26,7 +26,7 @@ export class AsistenciaService {
                             id_usuario: va.id_usuario,
                             id_sesion: sesion.id_sesion,
                             codigo_validacion: va.codigo_validacion,
-                            fecha_hora: date.format('YYYY-MM-DD hh:m:s')
+                            fecha_hora: date.format('YYYY-MM-DD HH:m:s')
                         }
                     });
             if (result[0][0]['validar_asistencia'] == 1) {
