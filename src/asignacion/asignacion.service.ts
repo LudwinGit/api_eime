@@ -3,6 +3,7 @@ import { Asignacion } from 'src/models/Asignacion.model';
 import { InjectModel } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize';
 import { CreateAsignacionDto } from './dto/create-asignacion.dto';
+import moment = require('moment-timezone');
 
 @Injectable()
 export class AsignacionService {
@@ -15,21 +16,25 @@ export class AsignacionService {
     async reporteAsistencia(id): Promise<any[]> {
         try {
             const result = await this.sequelize
-                .query(`select u.dpi, u.nombre,
-                        (count(ast.id_sesion) FILTER (WHERE ast.asistio = B'1'))::numeric/count(ast.id_sesion)*100 as Asistencia,
-                        (count(ast.id_sesion) FILTER (WHERE ast.asistio = B'0'))::numeric/count(ast.id_sesion)*100 as Inasistencia
+                .query(`
+                    select u.dpi, u.nombre,
+                        (count(ast.id_sesion) FILTER (WHERE ast.asistio = B'1'))::numeric/count(di.no_sesiones)*100 as Asistencia,
+                        (count(ast.id_sesion) FILTER (WHERE ast.asistio = B'0'))::numeric/count(di.no_sesiones)*100 as Inasistencia,
+                        asg.codigo_unico
                     from usuario u
                     inner join asignacion asg
                     on u.id_usuario = asg.id_usuario
                     inner join sesion s
-                    on asg.id_curso = s.id_curso
+                    on asg.id_diplomado = s.id_diplomado
                     inner join asistencia ast
                     on s.id_sesion = ast.id_sesion
-                    where asg.id_curso=:_id_curso AND ast.id_usuario = u.id_usuario
-                    group by u.dpi, u.nombre;`,
+                    inner join diplomado di
+                    on s.id_diplomado = di.id_diplomado
+                    where asg.id_diplomado=:_id_diplomado AND ast.id_usuario = u.id_usuario
+                    group by u.dpi, u.nombre, asg.codigo_unico;`,
                     {
                         replacements: {
-                            _id_curso: id
+                            _id_diplomado: id
                         }
                     });
             return result[0];
@@ -40,11 +45,12 @@ export class AsignacionService {
         }
     }
 
+    //CORREGIR tomar en cuenta que la tabla curso, ya no existe. Si esta solucionado ignorar este comentario.
     async cursosUsuario(id: number): Promise<any[]> {
         try {
             const result = await this.sequelize
                 .query(`select b.* from asignacion a
-                        join curso b on a.id_curso = b.id_curso
+                        join diplomado b on a.id_diplomado = b.id_diplomado
                         where id_usuario = ${id}`);
             return result[0];
         } catch (err) {
@@ -54,10 +60,12 @@ export class AsignacionService {
     }
 
     async asignacionesUsuario(id: number): Promise<any[]> {
+        let date = new Date();
+
         try {
             const result = await this.sequelize
-                .query(`select * from curso a
-                        where a.estado = '1' and a.id_curso not in(select id_curso from asignacion where id_usuario = ${id} )`);
+                .query(`select * from diplomado a
+                        where a.estado = '1' and a.id_diplomado not in(select id_diplomado from asignacion where id_usuario = ${id}) and a.fecha_inicio >= '${moment().format("YYYY-MM-DD")}'`);
             return result[0];
         } catch (err) {
             console.log(err)
@@ -66,15 +74,21 @@ export class AsignacionService {
     }
 
     async crearAsignacion(crearAsignacionDto: CreateAsignacionDto) {
-        let date = new Date();
-        let timestamp = `${date.getFullYear()}-${date.getMonth()}-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:00`;
+        let date = moment().tz('America/Guatemala');
+
+        let codigo_unico = crearAsignacionDto.id_usuario + crearAsignacionDto.id_curso + Math.random().toString(36).substring(7);
         try {
             const result = await this.sequelize
-                .query(`INSERT INTO asignacion values(${crearAsignacionDto.id_usuario},${crearAsignacionDto.id_curso},'${timestamp}')`);
+                .query(`INSERT INTO asignacion values(${crearAsignacionDto.id_usuario},${crearAsignacionDto.id_curso},'${date.format('YYYY-MM-DD HH:m:s')}','${codigo_unico}')`);
             return 1;
         } catch (err) {
             console.log(err)
             return 0;
         }
+    }
+
+    async validar(codigo: string): Promise<any> {
+        const resultado = await this.sequelize.query(`select * from f_validar_codigo('${codigo}')`);
+        return resultado[0];
     }
 }

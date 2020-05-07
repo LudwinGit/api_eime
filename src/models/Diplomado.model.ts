@@ -1,11 +1,11 @@
 import { Column,Model,Table, Default, AllowNull, PrimaryKey } from "sequelize-typescript";
 import { DataTypes } from "sequelize";
 
-@Table({tableName: "curso",timestamps: false})
-export class Curso extends Model<Curso>{
+@Table({tableName: "diplomado",timestamps: false})
+export class Diplomado extends Model<Diplomado>{
     @PrimaryKey
     @Column
-    id_curso: number;
+    id_diplomado: number;
 
     @Column
     nombre: string;
@@ -28,7 +28,7 @@ export class Curso extends Model<Curso>{
     @Column
     fecha_inicio: string;
 
-    @Default('B\'1\'')
+    @Default(1)
     @Column
     estado: number;
 

@@ -1,8 +1,9 @@
-import { Column,Model,Table, Default, AllowNull, PrimaryKey, AutoIncrement, Unique } from "sequelize-typescript";
+import { Column, Model, Table, Default, AllowNull, PrimaryKey, AutoIncrement, Unique } from "sequelize-typescript";
+import { DataTypes } from "sequelize";
 
-@Table({tableName: "usuario",timestamps: false})
+@Table({ tableName: "usuario", timestamps: false })
 export class Usuario extends Model<Usuario>{
-    
+
     @PrimaryKey
     @AutoIncrement
     @Column
@@ -23,16 +24,20 @@ export class Usuario extends Model<Usuario>{
     @Column
     correo: string;
 
-    @AllowNull(true)
+    // @Default('B\'0\'')
     @Column
-    telefono: string;
+    debaja: string;
 
     @Column
-    id_rol : number;
+    id_rol: number;
 
     @AllowNull(true)
     @Column
     direccion: string;
+
+    @AllowNull(true)
+    @Column
+    telefono: string;
 
     @AllowNull(true)
     @Column
@@ -50,4 +55,11 @@ export class Usuario extends Model<Usuario>{
     @AllowNull(true)
     @Column
     firma: string;
+
+    @Column(DataTypes.VIRTUAL)
+    password: any;
+
+    @AllowNull(true)
+    @Column
+    img_seguridad: string;
 }

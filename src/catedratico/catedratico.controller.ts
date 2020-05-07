@@ -9,20 +9,20 @@ export class CatedraticoController {
         private readonly catedraticoService: CatedraticoService
     ){}
 
-    @Get()
+    @Post()
     async findAll():Promise<any[]>{
         return await this.catedraticoService.findAll();
     }
 
-    @Get(':id/cursos')
+    @Post(':id/diplomados')
     async findCourses(@Param('id')id:string):Promise<any[]>{
        return await this.catedraticoService.findCourses(id)
     }
 
-    @Post()
+    @Post('new')
     async addCatedratico(@Req() req:Request, @Res() res: Response):Promise<any>{
         const result = await this.catedraticoService.addCatedratico(req.body);
-        const response = result === 1? 
+        const response = result['success'] === 1? 
             {
                 success: 1,
                 message: '',
@@ -31,16 +31,17 @@ export class CatedraticoController {
             :
             {
                 success: 0,
-                message: 'Error al crear el catedratico, correo y cui deben ser estar ya asociados a una cuenta',
+                message: 'Error al crear el catedratico, correo y cui deben ser estar ya asociados a una cuenta: '+result['message'],
                 catedratico: req.body
             };
         return res.json(response);
     }
 
-    @Delete(':id')
-    async deleteCatedratico(@Param() param, @Res() res: Response):Promise<any>{
-        const result = await this.catedraticoService.deleteCatedratico(param.id);
-        const response = result === 1? 
+    @Delete('/diplomado')
+    async deleteCatedraticoDiplomado(@Req() req:Request, @Res() res: Response):Promise<any>{
+        console.log('Dar de baja diplomado')
+        const result = await this.catedraticoService.deleteCatedraticoDiplomado(req.body);
+        const response = result['success'] === 1? 
             {
                 success: 1,
                 message: '' 
@@ -48,16 +49,32 @@ export class CatedraticoController {
             :
             {
                 success: 0,
-                message: 'Error al eliminar el catedratico, registro inexistente'
+                message: 'Error al eliminar el diplomado: '+result['message']
             };
         return res.json(response);
     }
 
+    @Delete(':id')
+    async deleteCatedratico(@Param() param, @Res() res: Response):Promise<any>{
+        const result = await this.catedraticoService.deleteCatedratico(param.id);
+        const response = result['success'] === 1? 
+            {
+                success: 1,
+                message: '' 
+            }
+            :
+            {
+                success: 0,
+                message: 'Error al eliminar el catedratico: '+result['message']
+            };
+        return res.json(response);
+    }
+    
     @Put()
     async updateCatedratico(@Req() req:Request, @Res() res: Response):Promise<any>{
         //console.log(req.body);
         const result = await this.catedraticoService.updateCatedratico(req.body);
-        const response = result === 1? 
+        const response = result['success'] === 1? 
             {
                 success: 1,
                 message: '',
@@ -66,8 +83,25 @@ export class CatedraticoController {
             :
             {
                 success: 0,
-                message: 'Error al actualizar catedratico',
+                message: 'Error al actualizar catedratico'+result['message'],
                 catedratico: req.body
+            };
+        return res.json(response);
+    }
+
+    @Put('/diplomado')
+    async cancelarCatedraticoDiplomado(@Req() req:Request, @Res() res: Response):Promise<any>{
+        console.log('Cancelar diplomado')
+        const result = await this.catedraticoService.cancelarCatedraticoDiplomado(req.body);
+        const response = result['success'] === 1? 
+            {
+                success: 1,
+                message: '' 
+            }
+            :
+            {
+                success: 0,
+                message: 'Error al cancelar el diplomado: '+result['message']
             };
         return res.json(response);
     }

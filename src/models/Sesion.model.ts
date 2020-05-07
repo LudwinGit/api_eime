@@ -8,7 +8,7 @@ export class Sesion extends Model<Sesion>{
     id_sesion: number;
     
     @Column
-    id_curso : number;
+    id_diplomado : number;
 
     @Column
     codigo_validacion: string;

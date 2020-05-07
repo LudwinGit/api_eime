@@ -8,15 +8,15 @@ export class DiplomadoController {
         private readonly diplomadoService: DiplomadoService
     ){}
 
-    @Get()
+    @Post()
     async findAll():Promise<any[]>{
         return this.diplomadoService.findAll();
     }
 
-    @Post()
-    async addCatedratico(@Req() req:Request, @Res() res: Response):Promise<any>{
+    @Post('new')
+    async addDiplomado(@Req() req:Request, @Res() res: Response):Promise<any>{
         const result = await this.diplomadoService.addDiplomado(req.body);
-        const response = result === 1? 
+        const response = result['success'] === 1? 
             {
                 success: 1,
                 message: '',
@@ -25,16 +25,16 @@ export class DiplomadoController {
             :
             {
                 success: 0,
-                message: 'Error al crear el diplomado',
+                message: 'Error al crear el diplomado: '+result['message'],
                 diplomado: req.body
             };
         return res.json(response);
     }
 
     @Delete(':id')
-    async deleteCatedratico(@Param() param, @Res() res: Response):Promise<any>{
+    async deleteDiplomado(@Param() param, @Res() res: Response):Promise<any>{
         const result = await this.diplomadoService.deleteDiplomado(param.id);
-        const response = result === 1? 
+        const response = result['success'] === 1? 
             {
                 success: 1,
                 message: '' 
@@ -42,16 +42,16 @@ export class DiplomadoController {
             :
             {
                 success: 0,
-                message: 'Error al eliminar el diplomado, registro inexistente'
+                message: 'Error al eliminar el diplomado:'+result['message']
             };
         return res.json(response);
     }
 
     @Put()
-    async updateCatedratico(@Req() req:Request, @Res() res: Response):Promise<any>{
+    async updateDiplomado(@Req() req:Request, @Res() res: Response):Promise<any>{
         //console.log(req.body);
         const result = await this.diplomadoService.updateDiplomado(req.body);
-        const response = result === 1? 
+        const response = result['success'] === 1? 
             {
                 success: 1,
                 message: '',
@@ -60,7 +60,7 @@ export class DiplomadoController {
             :
             {
                 success: 0,
-                message: 'Error al actualizar diplomado',
+                message: 'Error al actualizar diplomado: '+result['message'],
                 diplomado: req.body
             };
         return res.json(response);

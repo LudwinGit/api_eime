@@ -13,4 +13,7 @@ export class Asignacion extends Model<Asignacion>{
 
     @Column
     fecha_hora: string;
+
+    @Column
+    codigo_unico: string;
 }

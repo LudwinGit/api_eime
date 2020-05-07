@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common';
 import { DiplomadoController } from './diplomado.controller';
 import { DiplomadoService } from './diplomado.service';
 import { SequelizeModule } from '@nestjs/sequelize';
-import { Curso } from 'src/models/Curso.model';
+import { Diplomado } from 'src/models/Diplomado.model';
 
 @Module({
   imports: [
-    SequelizeModule.forFeature([Curso])
+    SequelizeModule.forFeature([Diplomado])
   ],
   controllers: [DiplomadoController],
   providers: [DiplomadoService]

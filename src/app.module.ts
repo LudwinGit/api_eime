@@ -13,9 +13,11 @@ import { SesionModule } from './sesion/sesion.module';
 import { Usuario } from './models/Usuario.model';
 import { Password } from './models/Password.model';
 import { Rol } from './models/Rol.model';
-import { Curso } from './models/Curso.model';
+import { Diplomado } from './models/Diplomado.model';
 import { Asignacion } from './models/Asignacion.model';
 import { Sesion } from './models/Sesion.model';
+import { BitacoraModule } from './bitacora/bitacora.module';
+import { AsistenciaModule } from './asistencia/asistencia.module';
 
 @Module({
   imports: [
@@ -30,14 +32,14 @@ import { Sesion } from './models/Sesion.model';
         Usuario,
         Password,
         Rol,
-        Curso,
+        Diplomado,
         Asignacion,
         Sesion]
     }), 
     UsuarioModule, 
     RoleModule, 
     CatedraticoModule, 
-    DiplomadoModule, AsignacionModule, SesionModule
+    DiplomadoModule, AsignacionModule, SesionModule, BitacoraModule,AsistenciaModule
   ],
   controllers: [AppController],
   providers: [AppService],

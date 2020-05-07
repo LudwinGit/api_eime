@@ -6,6 +6,8 @@ import { LoginDto } from './dto/login.dto';
 import { Password } from 'src/models/Password.model';
 import { CreateUserDto } from './dto/create.dto';
 import { ChangePasswordDto } from './dto/change-password.dto';
+import { Sequelize } from 'sequelize';
+import moment = require('moment-timezone');
 
 @Injectable()
 export class UsuarioService {
@@ -14,6 +16,7 @@ export class UsuarioService {
         private usuarioModel: typeof Usuario,
         @InjectModel(Password)
         private passwordModel: typeof Password,
+        private sequelize: Sequelize
     ) { }
 
     async findAll(): Promise<Usuario[]> {
@@ -25,14 +28,19 @@ export class UsuarioService {
     }
 
     async findByEmail(findEmailDto: FindEmailDto): Promise<Usuario> {
-        return await this.usuarioModel.findOne({ where: { correo: findEmailDto.email } });
+        return await this.usuarioModel.findOne({ where: { correo: findEmailDto.email, debaja: '0' } });
     }
 
-    async login(loginDto: LoginDto): Promise<Usuario> {
+    async login(loginDto: LoginDto, ip): Promise<Usuario> {
         const password = await this.passwordModel.findOne({
             where:
                 { pwd: loginDto.password, id_usuario: loginDto.id }
         });
+
+        let date = moment().tz('America/Guatemala');
+        date.format('YYYY-MM-DD HH:m:s')
+        await this.sequelize.query(`INSERT INTO bitacora(id_usuario,fecha_hora,ip) VALUES(${loginDto.id},'${date.format('YYYY-MM-DD HH:m:s')}','${ip}')`);
+
 
         return (password == null) ? null :
             await this.usuarioModel.findOne({ where: { id_usuario: loginDto.id } });
@@ -59,12 +67,17 @@ export class UsuarioService {
         usuario.dpi = createUserDto.cui;
         usuario.foto = createUserDto.picture;
         usuario.id_rol = 3;
+        usuario.debaja = '0';
+        usuario.img_seguridad = createUserDto.sec_img;
+
         await usuario.save();
 
         let password: Password = new Password();
-        let date = new Date();
+        let date = moment().tz('America/Guatemala');
+        date.add(30, 'days');
+
         password.pwd = createUserDto.password;
-        password.fecha_hora = date;
+        password.fecha_hora = date.format('YYYY-MM-DD HH:m:s');
         password.id_usuario = usuario.id_usuario;
         password.active = '1';
         await password.save();
@@ -76,19 +89,69 @@ export class UsuarioService {
 
         let password: Password = await this.passwordModel.findOne({
             where: {
-                pwd: changePasswordDto.password,
-                active: '1',
+                pwd: changePasswordDto.newPassword,
                 id_usuario: changePasswordDto.id,
             }
         });
 
-        if (password === null)
+        if (password !== null)
             return false;
 
-        await this.passwordModel.update({
-            pwd : changePasswordDto.newPassword
-        },{where:{id_password: password.id_password}});
 
+        await this.passwordModel.update({
+            active: '0'
+        }, { where: { id_usuario: changePasswordDto.id } });
+
+        let newPassword: Password = new Password();
+        let date = moment().tz('America/Guatemala');
+        date.add(30, 'days');
+
+        newPassword.pwd = changePasswordDto.newPassword;
+        newPassword.fecha_hora = date.format('YYYY-MM-DD HH:m:s');
+        newPassword.id_usuario = changePasswordDto.id;
+        newPassword.active = '1';
+        await newPassword.save();
+
+        return true;
+    }
+
+    async asistencia(id_usuario: number, id_diplomado: number): Promise<any> {
+        try {
+            const result = await this.sequelize
+                .query(`select * from asistencia a
+                join sesion b on b.id_sesion = a.id_sesion
+                where b.id_diplomado = ${id_diplomado} and a.id_usuario = ${id_usuario}`);
+            return result[0];
+        } catch (err) {
+            console.log(err)
+            return null;
+        }
+    }
+
+    async validarPassword(pwd: string, id_usaurio: number): Promise<Password> {
+
+        let password: Password = await this.passwordModel.findOne({
+            where: {
+                pwd: pwd,
+                active: '1',
+                id_usuario: id_usaurio,
+            }
+        });
+
+        if (password === null)
+            return null;
+
+        return password;
+    }
+
+    async getPassword(id_usuario: string): Promise<Password> {
+        return await this.passwordModel.findOne({ where: { 'active': '1', 'id_usuario': id_usuario } });
+    }
+
+    async validarImagen(loginDto: LoginDto): Promise<boolean> {
+        const usuario: Usuario = await this.usuarioModel.findOne({ where: { 'id_usuario': loginDto.id, 'img_seguridad': loginDto.sec_img } })
+        if (usuario === null)
+            return false;
         return true;
     }
 }
