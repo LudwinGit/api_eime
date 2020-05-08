@@ -23,10 +23,10 @@ import { AsistenciaModule } from './asistencia/asistencia.module';
   imports: [
     SequelizeModule.forRoot({
       dialect: "postgres",
-      host: "138.68.252.228",
+      host: "10.5.0.4",
       port: 5432,
       username: "postgres",
-      password: "eime202003",
+      password: "eime2020usac",
       database: "db_eime",
       models:[
         Usuario,
